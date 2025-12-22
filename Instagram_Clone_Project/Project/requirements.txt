@@ -1,0 +1,21 @@
+# Flask web framework
+Flask==3.0.0
+flask-cors==4.0.0
+
+# Database drivers
+neo4j==5.15.0
+cassandra-driver==3.29.0
+pymongo==4.6.1
+redis==5.0.1
+boto3==1.34.0  # For MinIO S3-compatible API
+
+# File upload handling
+Werkzeug==3.0.1
+
+# Environment variables
+python-dotenv==1.0.0
+
+# Utilities
+python-uuid==1.30
+
+

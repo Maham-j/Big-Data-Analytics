@@ -1,0 +1,27 @@
+{
+  "name": "instagram-clone",
+  "version": "1.0.0",
+  "description": "Instagram-like clone with multi-DB architecture",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "seed": "node server/scripts/seed.js",
+    "init-db": "node server/scripts/init-databases.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "neo4j-driver": "^5.15.0",
+    "cassandra-driver": "^4.6.5",
+    "mongodb": "^6.3.0",
+    "redis": "^4.6.11",
+    "aws-sdk": "^2.1509.0",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
+
