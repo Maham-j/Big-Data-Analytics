@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Clone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #fafafa;
+            color: #262626;
+            line-height: 1.5;
+        }
+        
+        /* Navigation Bar */
+        .navbar {
+            background: #fff;
+            border-bottom: 1px solid #dbdbdb;
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 0 rgba(0,0,0,.0975);
+        }
+        
+        .nav-container {
+            max-width: 975px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: #262626;
+            text-decoration: none;
+        }
+        
+        .nav-user-select {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .nav-user-select select {
+            padding: 6px 12px;
+            border: 1px solid #dbdbdb;
+            border-radius: 4px;
+            background: #fafafa;
+            font-size: 14px;
+            color: #262626;
+            cursor: pointer;
+        }
+        
+        /* Main Container */
+        .main-container {
+            max-width: 614px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        /* Reel Card */
+        .reel-card {
+            background: #fff;
+            border: 1px solid #dbdbdb;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        
+        .reel-header {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid #efefef;
+        }
+        
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px #dbdbdb;
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .author-info {
+            flex: 1;
+        }
+        
+        .author-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #262626;
+            text-decoration: none;
+        }
+        
+        .author-name:hover {
+            text-decoration: underline;
+        }
+        
+        /* Media */
+        .reel-media-container {
+            position: relative;
+            background: #000;
+            width: 100%;
+            aspect-ratio: 9/16;
+            max-height: 800px;
+            overflow: hidden;
+        }
+        
+        .reel-media {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Actions */
+        .reel-actions {
+            padding: 6px 16px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            font-size: 24px;
+            line-height: 1;
+            transition: transform 0.1s;
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .action-btn.liked {
+            color: #ed4956;
+        }
+        
+        .action-btn:not(.liked) {
+            color: #262626;
+        }
+        
+        /* Likes and Caption */
+        .reel-content {
+            padding: 0 16px 12px;
+        }
+        
+        .likes-count {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #262626;
+        }
+        
+        .caption {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .caption-username {
+            font-weight: 600;
+            color: #262626;
+            margin-right: 4px;
+        }
+        
+        .view-comments {
+            color: #8e8e8e;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 4px;
+        }
+        
+        .view-comments:hover {
+            color: #262626;
+        }
+        
+        .time-ago {
+            color: #8e8e8e;
+            font-size: 10px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        
+        /* Comments Section */
+        .comments-section {
+            border-top: 1px solid #efefef;
+            padding: 12px 16px;
+        }
+        
+        .comment {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .comment-content {
+            display: flex;
+        }
+        
+        .comment-author {
+            font-weight: 600;
+            margin-right: 4px;
+            color: #262626;
+            cursor: pointer;
+        }
+        
+        .comment-author:hover {
+            text-decoration: underline;
+        }
+        
+        .comment-text {
+            color: #262626;
+        }
+        
+        .comment-reply-btn {
+            background: none;
+            border: none;
+            color: #8e8e8e;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 8px;
+            font-weight: 600;
+        }
+        
+        .comment-reply-btn:hover {
+            color: #262626;
+        }
+        
+        .comment-replies {
+            margin-left: 40px;
+            margin-top: 8px;
+            padding-left: 16px;
+            border-left: 3px solid #dbdbdb;
+            padding-top: 4px;
+        }
+        
+        .comment-reply {
+            margin-left: 0;
+            padding-left: 0;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+        }
+        
+        .comment-reply .comment-content {
+            display: flex;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        
+        .comment-reply .comment-author {
+            font-weight: 600;
+            margin-right: 4px;
+            color: #262626;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .comment-reply .comment-author:hover {
+            text-decoration: underline;
+        }
+        
+        .comment-reply .comment-text {
+            color: #262626;
+        }
+        
+        .reply-form {
+            margin-top: 8px;
+            margin-left: 24px;
+            display: none;
+        }
+        
+        .reply-form.active {
+            display: flex;
+            align-items: center;
+        }
+        
+        .reply-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            color: #262626;
+            background: transparent;
+            padding: 4px 0;
+        }
+        
+        .reply-btn {
+            background: none;
+            border: none;
+            color: #0095f6;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 0 8px;
+        }
+        
+        .reply-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .comment-form {
+            display: flex;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #efefef;
+            margin-top: 8px;
+        }
+        
+        .comment-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            color: #262626;
+            background: transparent;
+        }
+        
+        .comment-input::placeholder {
+            color: #8e8e8e;
+        }
+        
+        .comment-btn {
+            background: none;
+            border: none;
+            color: #0095f6;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 0;
+            opacity: 0.3;
+            transition: opacity 0.2s;
+        }
+        
+        .comment-btn:enabled {
+            opacity: 1;
+        }
+        
+        .comment-btn:hover:enabled {
+            opacity: 0.7;
+        }
+        
+        /* Loading & Error */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8e8e8e;
+        }
+        
+        .error {
+            background: #fff;
+            border: 1px solid #dbdbdb;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 24px;
+            color: #ed4956;
+            text-align: center;
+        }
+        
+        .load-more {
+            text-align: center;
+            margin-top: 24px;
+        }
+        
+        .load-more-btn {
+            background: #0095f6;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .load-more-btn:hover {
+            background: #0084d4;
+        }
+        
+        .load-more-btn:disabled {
+            background: #b2dffc;
+            cursor: not-allowed;
+        }
+        
+        .nav-link {
+            color: #262626;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #262626;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .logout-btn:hover {
+            color: #8e8e8e;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8e8e8e;
+        }
+        
+        /* Responsive */
+        @media (max-width: 640px) {
+            .main-container {
+                padding: 0;
+            }
+            
+            .reel-card {
+                border-left: none;
+                border-right: none;
+                border-radius: 0;
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Instagram</a>
+            <div class="nav-user-select">
+                <a href="upload.html" class="nav-link" style="text-decoration: none; color: #262626; font-size: 14px; margin-right: 15px;">➕ Create</a>
+                <a href="discover.html" class="nav-link" style="text-decoration: none; color: #262626; font-size: 14px; margin-right: 15px;">Discover</a>
+                <a href="profile.html" class="nav-link" style="text-decoration: none; color: #262626; font-size: 14px; margin-right: 15px;">Profile</a>
+                <button class="logout-btn" onclick="handleLogout()" style="background: none; border: none; color: #262626; cursor: pointer; font-size: 14px; font-family: inherit;">Logout</button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="main-container">
+        <div id="error"></div>
+        <!-- Stories Section -->
+        <div id="stories-container" style="background: #fff; border: 1px solid #dbdbdb; border-radius: 8px; padding: 16px; margin-bottom: 24px; overflow-x: auto;">
+            <div id="stories-list" style="display: flex; gap: 16px; min-width: max-content;">
+                <!-- Stories will be loaded here -->
+            </div>
+        </div>
+        <div id="reels-container"></div>
+        <div class="load-more">
+            <button id="loadMoreBtn" class="load-more-btn" onclick="loadMore()" style="display: none;">Load More</button>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        let currentPage = 1;
+        let currentUserId = localStorage.getItem('userId') || 'user1';
+        let hasMore = true;
+        const likedReels = new Set();
+        
+        // Check if user is logged in
+        const storedUserId = localStorage.getItem('userId');
+        if (!storedUserId) {
+            window.location.href = 'login.html';
+        } else {
+            currentUserId = storedUserId;
+        }
+        
+        // Load stories
+        async function loadStories() {
+            try {
+                const response = await fetch(`${API_BASE}/stories?userId=${currentUserId}`);
+                const data = await response.json();
+                
+                if (response.ok && data.stories && data.stories.length > 0) {
+                    renderStories(data.stories);
+                } else {
+                    document.getElementById('stories-container').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading stories:', error);
+                document.getElementById('stories-container').style.display = 'none';
+            }
+        }
+        
+        function renderStories(storiesData) {
+            const container = document.getElementById('stories-list');
+            const currentUsername = localStorage.getItem('username') || 'You';
+            
+            // Add "Your Story" option first
+            let html = `
+                <div class="story-item" onclick="uploadStory()" style="cursor: pointer; text-align: center; min-width: 70px;">
+                    <div class="story-avatar" style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 24px; font-weight: 600; margin: 0 auto 4px; border: 3px solid #fff; box-shadow: 0 0 0 2px #dbdbdb;">
+                        <span style="font-size: 32px;">+</span>
+                    </div>
+                    <div style="font-size: 12px; color: #262626; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70px;">Your Story</div>
+                </div>
+            `;
+            
+            // Add other users' stories
+            storiesData.forEach(({ user, stories }) => {
+                if (user.id === currentUserId) return; // Skip own story (already added)
+                const avatarContent = user.avatar 
+                    ? `<img src="${user.avatar}" alt="${user.username}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`
+                    : user.username.charAt(0).toUpperCase();
+                html += `
+                    <div class="story-item" onclick="viewStories('${user.id}')" style="cursor: pointer; text-align: center; min-width: 70px;">
+                        <div class="story-avatar" style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 24px; font-weight: 600; margin: 0 auto 4px; border: 3px solid #fff; box-shadow: 0 0 0 2px #dbdbdb; position: relative; overflow: hidden;">
+                            ${avatarContent}
+                        </div>
+                        <div style="font-size: 12px; color: #262626; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70px;">${user.username}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function uploadStory() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,video/*';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const formData = new FormData();
+                formData.append('media', file);
+                formData.append('userId', currentUserId);
+                
+                try {
+                    const response = await fetch(`${API_BASE}/stories`, {
+                        method: 'POST',
+                        body: formData,
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        alert('Story uploaded successfully!');
+                        loadStories();
+                    } else {
+                        alert('Failed to upload story: ' + (data.error || 'Unknown error'));
+                    }
+                } catch (error) {
+                    console.error('Error uploading story:', error);
+                    alert('Error uploading story: ' + error.message);
+                }
+            };
+            input.click();
+        }
+        
+        async function viewStories(userId) {
+            try {
+                const response = await fetch(`${API_BASE}/stories/user/${userId}`);
+                const data = await response.json();
+                
+                if (response.ok && data.stories && data.stories.length > 0) {
+                    showStoryViewer(data.stories, 0);
+                } else {
+                    alert('No stories available');
+                }
+            } catch (error) {
+                console.error('Error loading stories:', error);
+                alert('Error loading stories: ' + error.message);
+            }
+        }
+        
+        function showStoryViewer(stories, startIndex = 0) {
+            // Simple story viewer - can be enhanced later
+            const story = stories[startIndex];
+            if (!story) return;
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center;';
+            modal.innerHTML = `
+                <div style="position: relative; max-width: 400px; max-height: 80vh; width: 100%;">
+                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 24px; cursor: pointer; z-index: 2001;">×</button>
+                    <img src="${story.mediaUrl}" alt="Story" style="width: 100%; height: auto; border-radius: 8px;">
+                    ${stories.length > 1 ? `
+                        <button onclick="showStoryViewer([${stories.map(s => JSON.stringify(s)).join(',')}], ${startIndex + 1})" style="position: absolute; right: 10px; bottom: 10px; background: rgba(0,0,0,0.5); color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Next</button>
+                    ` : ''}
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        async function loadFeed(reset = false) {
+            if (reset) {
+                currentPage = 1;
+                hasMore = true;
+                document.getElementById('reels-container').innerHTML = '';
+            }
+            const container = document.getElementById('reels-container');
+            const errorDiv = document.getElementById('error');
+            errorDiv.innerHTML = '';
+            
+            if (currentPage === 1) {
+                container.innerHTML = '<div class="loading">Loading...</div>';
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/reels/feed?userId=${currentUserId}&page=${currentPage}&limit=5`);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load feed');
+                }
+                
+                if (data.reels.length === 0 && currentPage === 1) {
+                    container.innerHTML = '<div class="empty-state">No reels found. Make sure you\'ve seeded the database!</div>';
+                    return;
+                }
+                
+                if (currentPage === 1) {
+                    container.innerHTML = '';
+                }
+                
+                data.reels.forEach(reel => renderReel(reel));
+                
+                hasMore = data.reels.length === 5;
+                document.getElementById('loadMoreBtn').style.display = hasMore ? 'block' : 'none';
+                
+            } catch (error) {
+                console.error('Feed error:', error);
+                errorDiv.innerHTML = `<div class="error">Error: ${error.message}. Check console for details.</div>`;
+                container.innerHTML = '';
+            }
+        }
+        
+        function renderReel(reel) {
+            const container = document.getElementById('reels-container');
+            const reelDiv = document.createElement('div');
+            reelDiv.className = 'reel-card';
+            reelDiv.id = `reel-${reel.id}`;
+            
+            const isLiked = likedReels.has(reel.id) || reel.liked;
+            if (isLiked) likedReels.add(reel.id);
+            
+            const timeAgo = getTimeAgo(new Date(reel.createdAt));
+            
+            const avatarHtml = reel.author.avatar 
+                ? `<img src="${reel.author.avatar}" alt="${reel.author.username}" style="width: 100%; height: 100%; object-fit: cover;">`
+                : reel.author.username.charAt(0).toUpperCase();
+            
+            reelDiv.innerHTML = `
+                <div class="reel-header">
+                    <div class="avatar">${avatarHtml}</div>
+                    <div class="author-info">
+                        <a href="profile.html?userId=${reel.author.id}" class="author-name">${reel.author.username}</a>
+                    </div>
+                </div>
+                <div class="reel-media-container">
+                    <img src="${reel.mediaUrl}" alt="Reel" class="reel-media" onerror="this.src='https://via.placeholder.com/400x600/333/fff?text=Media+Not+Found'">
+                </div>
+                <div class="reel-actions">
+                    <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${reel.id}', this)" title="Like">
+                        ${isLiked ? '❤️' : '🤍'}
+                    </button>
+                    <button class="action-btn" onclick="focusComment('${reel.id}')" title="Comment">💬</button>
+                    <button class="action-btn" onclick="shareReel('${reel.id}')" title="Share">📤</button>
+                </div>
+                <div class="reel-content">
+                    <div class="likes-count" id="likes-${reel.id}">${(reel.likesCount !== undefined && reel.likesCount !== null && !isNaN(Number(reel.likesCount))) ? Number(reel.likesCount) : 0} likes</div>
+                    <div class="caption">
+                        <span class="caption-username">${reel.author.username}</span>
+                        <span>${reel.caption}</span>
+                    </div>
+                    ${reel.comments.length > 0 ? `<div class="view-comments" onclick="toggleComments('${reel.id}')">View all ${reel.comments.length} comments</div>` : ''}
+                    <div class="time-ago">${timeAgo}</div>
+                </div>
+                <div class="comments-section" id="comments-section-${reel.id}" style="display: none;">
+                    <div id="comments-${reel.id}">
+                        ${reel.comments.map(c => renderComment(c, reel.id)).join('')}
+                    </div>
+                    <div class="comment-form">
+                        <input type="text" 
+                               class="comment-input" 
+                               id="comment-input-${reel.id}" 
+                               placeholder="Add a comment..."
+                               onkeypress="if(event.key==='Enter') postComment('${reel.id}')"
+                               oninput="updateCommentButton('${reel.id}')">
+                        <button class="comment-btn" id="comment-btn-${reel.id}" onclick="postComment('${reel.id}')" disabled>Post</button>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(reelDiv);
+        }
+        
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'JUST NOW';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}M`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}H`;
+            const days = Math.floor(hours / 24);
+            return `${days}D`;
+        }
+        
+        async function toggleComments(reelId) {
+            const section = document.getElementById(`comments-section-${reelId}`);
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                // Load full comments when opening
+                await loadCommentsForReel(reelId);
+            } else {
+                section.style.display = 'none';
+            }
+        }
+        
+        function renderComment(comment, reelId, isReply = false) {
+            const safeId = (comment.id || '').replace(/'/g, "\\'");
+            const safeAuthorId = (comment.author?.id || '').replace(/'/g, "\\'");
+            const safeAuthor = (comment.author?.username || 'unknown').replace(/'/g, "\\'");
+            const safeText = (comment.text || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            
+            let repliesHTML = '';
+            if (comment.replies && comment.replies.length > 0) {
+                repliesHTML = `
+                    <div class="comment-replies">
+                        ${comment.replies.map(reply => renderComment(reply, reelId, true)).join('')}
+                    </div>
+                `;
+            }
+            
+            // For replies, show username first, then text, and indent more
+            if (isReply) {
+                return `
+                    <div class="comment comment-reply" id="comment-${safeId}">
+                        <div class="comment-content">
+                            <a href="profile.html?userId=${safeAuthorId}" class="comment-author">${safeAuthor}</a>
+                            <span class="comment-text">${safeText}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="comment" id="comment-${safeId}">
+                    <div class="comment-content">
+                        <a href="profile.html?userId=${safeAuthorId}" class="comment-author">${safeAuthor}</a>
+                        <span class="comment-text">${safeText}</span>
+                        <button class="comment-reply-btn" onclick="showReplyForm('${safeId}', '${reelId}')">Reply</button>
+                    </div>
+                    <div class="reply-form" id="reply-form-${safeId}">
+                        <input type="text" 
+                               class="reply-input" 
+                               id="reply-input-${safeId}" 
+                               placeholder="Add a reply..."
+                               onkeypress="if(event.key==='Enter') postReply('${safeId}', '${reelId}')">
+                        <button class="reply-btn" onclick="postReply('${safeId}', '${reelId}')">Post</button>
+                        <button class="reply-btn" onclick="hideReplyForm('${safeId}')" style="color: #8e8e8e;">Cancel</button>
+                    </div>
+                    ${repliesHTML}
+                </div>
+            `;
+        }
+        
+        function showReplyForm(commentId, reelId) {
+            const form = document.getElementById(`reply-form-${commentId}`);
+            if (form) {
+                form.classList.add('active');
+                const input = document.getElementById(`reply-input-${commentId}`);
+                if (input) {
+                    input.focus();
+                }
+            }
+        }
+        
+        function hideReplyForm(commentId) {
+            const form = document.getElementById(`reply-form-${commentId}`);
+            if (form) {
+                form.classList.remove('active');
+                const input = document.getElementById(`reply-input-${commentId}`);
+                if (input) {
+                    input.value = '';
+                }
+            }
+        }
+        
+        async function postReply(commentId, reelId) {
+            const input = document.getElementById(`reply-input-${commentId}`);
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            const username = localStorage.getItem('username') || 'user';
+            input.disabled = true;
+            
+            try {
+                const response = await fetch(`${API_BASE}/comments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        reelId: reelId.toString(),
+                        userId: currentUserId,
+                        username: username,
+                        text: text,
+                        parentCommentId: commentId,
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Reload comments for this reel
+                    await loadCommentsForReel(reelId);
+                    hideReplyForm(commentId);
+                } else {
+                    alert('Failed to post reply: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error posting reply:', error);
+                alert('Error posting reply: ' + error.message);
+            } finally {
+                input.disabled = false;
+            }
+        }
+        
+        async function loadCommentsForReel(reelId) {
+            try {
+                const response = await fetch(`${API_BASE}/comments/${reelId}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const commentsDiv = document.getElementById(`comments-${reelId}`);
+                    if (commentsDiv) {
+                        commentsDiv.innerHTML = data.comments.map(c => renderComment(c, reelId)).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading comments:', error);
+            }
+        }
+        
+        function updateCommentButton(reelId) {
+            const input = document.getElementById(`comment-input-${reelId}`);
+            const btn = document.getElementById(`comment-btn-${reelId}`);
+            btn.disabled = !input.value.trim();
+        }
+        
+        async function toggleLike(reelId, button) {
+            const isLiked = likedReels.has(reelId);
+            const method = isLiked ? 'DELETE' : 'POST';
+            const url = `${API_BASE}/likes/${reelId}`;
+            
+            // Optimistic UI update
+            const newLiked = !isLiked;
+            button.textContent = newLiked ? '❤️' : '🤍';
+            button.classList.toggle('liked', newLiked);
+            
+            if (newLiked) {
+                likedReels.add(reelId);
+            } else {
+                likedReels.delete(reelId);
+            }
+            
+            try {
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: currentUserId }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const likesCount = (data.likesCount !== undefined && data.likesCount !== null && !isNaN(Number(data.likesCount))) ? Number(data.likesCount) : 0;
+                    document.getElementById(`likes-${reelId}`).textContent = `${likesCount} likes`;
+                } else {
+                    // Revert on error
+                    button.textContent = isLiked ? '❤️' : '🤍';
+                    button.classList.toggle('liked', isLiked);
+                    if (isLiked) {
+                        likedReels.add(reelId);
+                    } else {
+                        likedReels.delete(reelId);
+                    }
+                }
+            } catch (error) {
+                // Revert on error
+                button.textContent = isLiked ? '❤️' : '🤍';
+                button.classList.toggle('liked', isLiked);
+                if (isLiked) {
+                    likedReels.add(reelId);
+                } else {
+                    likedReels.delete(reelId);
+                }
+            }
+        }
+        
+        async function postComment(reelId) {
+            const input = document.getElementById(`comment-input-${reelId}`);
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            const username = localStorage.getItem('username') || 'user';
+            
+            // Disable button while posting
+            const btn = document.getElementById(`comment-btn-${reelId}`);
+            btn.disabled = true;
+            btn.textContent = 'Posting...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/comments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        reelId: reelId.toString(),
+                        userId: currentUserId,
+                        username: username,
+                        text: text,
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Reload comments to show the new one (and any replies)
+                    await loadCommentsForReel(reelId);
+                    input.value = '';
+                    updateCommentButton(reelId);
+                    
+                    // Show comments section if hidden
+                    const section = document.getElementById(`comments-section-${reelId}`);
+                    section.style.display = 'block';
+                    
+                    // Update comment count if displayed
+                    const viewComments = section.previousElementSibling.querySelector('.view-comments');
+                    if (viewComments) {
+                        const currentCount = parseInt(viewComments.textContent.match(/\d+/)?.[0] || '0');
+                        viewComments.textContent = `View all ${currentCount + 1} comments`;
+                    }
+                } else {
+                    alert('Failed to post comment: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error posting comment:', error);
+                alert('Error posting comment: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Post';
+            }
+        }
+        
+        function focusComment(reelId) {
+            const input = document.getElementById(`comment-input-${reelId}`);
+            const section = document.getElementById(`comments-section-${reelId}`);
+            section.style.display = 'block';
+            input.focus();
+        }
+        
+        function shareReel(reelId) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Check out this reel!',
+                    url: window.location.href + `#reel-${reelId}`
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(window.location.href + `#reel-${reelId}`);
+                alert('Link copied to clipboard!');
+            }
+        }
+        
+        function loadMore() {
+            currentPage++;
+            loadFeed(false);
+        }
+        
+        function handleLogout() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('username');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        }
+        
+        // Load feed on page load
+        loadStories();
+        loadFeed(true);
+        
+        // Scroll to reel if hash is present
+        window.addEventListener('load', () => {
+            if (window.location.hash) {
+                setTimeout(() => {
+                    const element = document.querySelector(window.location.hash);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
+

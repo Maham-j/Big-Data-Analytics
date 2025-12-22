@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover • Instagram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #fafafa;
+            color: #262626;
+        }
+        
+        .navbar {
+            background: #fff;
+            border-bottom: 1px solid #dbdbdb;
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 0 rgba(0,0,0,.0975);
+        }
+        
+        .nav-container {
+            max-width: 975px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: #262626;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #262626;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 30px;
+        }
+        
+        .user-card {
+            background: #fff;
+            border: 1px solid #dbdbdb;
+            border-radius: 4px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+            font-size: 18px;
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-username {
+            font-weight: 600;
+            font-size: 14px;
+            color: #262626;
+        }
+        
+        .user-bio {
+            font-size: 12px;
+            color: #8e8e8e;
+        }
+        
+        .follow-btn {
+            background: #0095f6;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 16px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .follow-btn:hover {
+            background: #0084d4;
+        }
+        
+        .follow-btn.following {
+            background: #fff;
+            color: #262626;
+            border: 1px solid #dbdbdb;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #8e8e8e;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8e8e8e;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Instagram</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="discover.html" class="nav-link">Discover</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <h1 class="page-title">Discover People</h1>
+        
+        <!-- Suggestions Section -->
+        <div id="suggestionsSection" style="margin-bottom: 40px;">
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 20px; color: #262626;">Suggestions for You</h2>
+            <div id="suggestionsList">
+                <div class="loading">Loading suggestions...</div>
+            </div>
+        </div>
+        
+        <!-- All Users Section -->
+        <div id="allUsersSection">
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 20px; color: #262626;">All Users</h2>
+            <div id="usersList">
+                <div class="loading">Loading users...</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        const currentUserId = localStorage.getItem('userId');
+        
+        if (!currentUserId) {
+            window.location.href = 'login.html';
+        }
+        
+        async function loadUsers() {
+            try {
+                console.log('Loading users for discovery, currentUserId:', currentUserId);
+                
+                // Get all users
+                const usersResponse = await fetch(`${API_BASE}/users`);
+                if (!usersResponse.ok) {
+                    throw new Error('Failed to fetch users');
+                }
+                
+                const usersData = await usersResponse.json();
+                console.log('Users API response:', usersData);
+                
+                // Handle both array and object with users property
+                let allUsers = [];
+                if (Array.isArray(usersData)) {
+                    allUsers = usersData;
+                } else if (usersData && usersData.users && Array.isArray(usersData.users)) {
+                    allUsers = usersData.users;
+                } else if (usersData && Array.isArray(usersData)) {
+                    allUsers = usersData;
+                } else {
+                    console.error('Unexpected users data format:', usersData);
+                    document.getElementById('usersList').innerHTML = '<div class="empty-state">Error: Invalid data format. Check console for details.</div>';
+                    return;
+                }
+                
+                console.log('Parsed users array:', allUsers);
+                
+                console.log('All users:', allUsers.length);
+                
+                // Filter out current user
+                const otherUsers = allUsers.filter(u => u && u.id && u.id !== currentUserId);
+                console.log('Other users (excluding self):', otherUsers.length);
+                
+                // Get list of users the current user is following
+                let followingIds = [];
+                try {
+                    const followingResponse = await fetch(`${API_BASE}/users/${currentUserId}/following`);
+                    if (followingResponse.ok) {
+                        const followingData = await followingResponse.json();
+                        followingIds = (followingData.following || []).map(u => u.id);
+                        console.log('Following IDs:', followingIds);
+                    }
+                } catch (error) {
+                    console.warn('Error fetching following list:', error);
+                }
+                
+                // Filter out users that are already being followed
+                const usersToShow = otherUsers.filter(u => !followingIds.includes(u.id));
+                console.log('Users to show (not following):', usersToShow.length);
+                
+                if (usersToShow.length === 0) {
+                    document.getElementById('usersList').innerHTML = '<div class="empty-state">No new users to discover. You\'re following everyone!</div>';
+                    return;
+                }
+                
+                renderUsers(usersToShow, followingIds);
+            } catch (error) {
+                console.error('Error loading users:', error);
+                document.getElementById('usersList').innerHTML = `<div class="empty-state">Error loading users: ${error.message}</div>`;
+            }
+        }
+        
+        function renderUsers(users, followingIds = []) {
+            const container = document.getElementById('usersList');
+            
+            if (!users || users.length === 0) {
+                container.innerHTML = '<div class="empty-state">No users to discover</div>';
+                return;
+            }
+            
+            console.log('Rendering users:', users.length);
+            
+            container.innerHTML = users.map(user => {
+                if (!user || !user.id) {
+                    console.warn('Invalid user data:', user);
+                    return '';
+                }
+                
+                const isFollowing = followingIds.includes(user.id);
+                const safeId = (user.id || '').replace(/'/g, "\\'");
+                const safeUsername = (user.username || 'unknown').replace(/'/g, "\\'");
+                const safeBio = (user.bio || 'No bio').replace(/'/g, "\\'");
+                
+                const avatarContent = user.avatar 
+                    ? `<img src="${user.avatar}" alt="${safeUsername}" onerror="this.parentElement.innerHTML='${safeUsername.charAt(0).toUpperCase()}'" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`
+                    : safeUsername.charAt(0).toUpperCase();
+                
+                return `
+                    <div class="user-card" id="user-${safeId}">
+                        <div class="user-info">
+                            <div class="user-avatar">${avatarContent}</div>
+                            <div class="user-details">
+                                <a href="profile.html?userId=${safeId}" style="text-decoration: none; color: inherit;">
+                                    <div class="user-username">${safeUsername}</div>
+                                </a>
+                                <div class="user-bio">${safeBio}</div>
+                            </div>
+                        </div>
+                        <button class="follow-btn ${isFollowing ? 'following' : ''}" onclick="toggleFollow('${safeId}', this)" id="follow-btn-${safeId}">${isFollowing ? 'Following' : 'Follow'}</button>
+                    </div>
+                `;
+            }).filter(html => html !== '').join('');
+            
+            if (container.innerHTML === '') {
+                container.innerHTML = '<div class="empty-state">No users to display</div>';
+            }
+        }
+        
+        async function toggleFollow(userId, button) {
+            const isFollowing = button.textContent === 'Following';
+            const method = isFollowing ? 'DELETE' : 'POST';
+            
+            button.disabled = true;
+            button.textContent = isFollowing ? 'Unfollowing...' : 'Following...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/users/${userId}/follow`, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ followerId: currentUserId }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    if (isFollowing) {
+                        button.textContent = 'Follow';
+                        button.classList.remove('following');
+                        // Remove user from list since they're no longer being followed
+                        const userCard = document.getElementById(`user-${userId}`);
+                        const suggestionCard = document.getElementById(`suggestion-${userId}`);
+                        if (userCard) {
+                            userCard.remove();
+                        }
+                        if (suggestionCard) {
+                            suggestionCard.remove();
+                        }
+                        // Check if list is empty
+                        const remainingUsers = document.querySelectorAll('#usersList .user-card');
+                        if (remainingUsers.length === 0) {
+                            document.getElementById('usersList').innerHTML = '<div class="empty-state">No new users to discover. You\'re following everyone!</div>';
+                        }
+                    } else {
+                        button.textContent = 'Following';
+                        button.classList.add('following');
+                        // Remove user from list since they're now being followed
+                        const userCard = document.getElementById(`user-${userId}`);
+                        const suggestionCard = document.getElementById(`suggestion-${userId}`);
+                        if (userCard) {
+                            userCard.remove();
+                        }
+                        if (suggestionCard) {
+                            suggestionCard.remove();
+                        }
+                        // Check if list is empty
+                        const remainingUsers = document.querySelectorAll('#usersList .user-card');
+                        if (remainingUsers.length === 0) {
+                            document.getElementById('usersList').innerHTML = '<div class="empty-state">No new users to discover. You\'re following everyone!</div>';
+                        }
+                        // Reload suggestions to get updated recommendations
+                        loadSuggestions();
+                        // Show success message
+                        console.log('Successfully followed user');
+                    }
+                } else {
+                    // Check if it's a Neo4j error
+                    if (data.error && data.error.includes('Neo4j')) {
+                        alert('Note: Follow relationship stored in MongoDB. Neo4j is not running, but you can still see their posts in your feed. To enable full features, start Neo4j with: docker-compose up -d neo4j');
+                        // Still update button since it worked (stored in MongoDB)
+                        button.textContent = 'Following';
+                        button.classList.add('following');
+                        // Reload suggestions
+                        loadSuggestions();
+                    } else {
+                        alert('Error: ' + (data.error || 'Failed to update follow status'));
+                        button.textContent = isFollowing ? 'Following' : 'Follow';
+                    }
+                }
+            } catch (error) {
+                console.error('Error toggling follow:', error);
+                alert('Error: ' + error.message);
+                button.textContent = isFollowing ? 'Following' : 'Follow';
+            } finally {
+                button.disabled = false;
+            }
+        }
+        
+        async function loadSuggestions() {
+            try {
+                const response = await fetch(`${API_BASE}/users/${currentUserId}/suggestions?limit=10`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch suggestions');
+                }
+                
+                const data = await response.json();
+                const suggestions = data.suggestions || [];
+                
+                const container = document.getElementById('suggestionsList');
+                
+                if (suggestions.length === 0) {
+                    container.innerHTML = '<div class="empty-state" style="padding: 20px;">No suggestions available. Start following people to see suggestions!</div>';
+                    return;
+                }
+                
+                container.innerHTML = suggestions.map(user => {
+                    const safeId = (user.id || '').replace(/'/g, "\\'");
+                    const safeUsername = (user.username || 'unknown').replace(/'/g, "\\'");
+                    const safeBio = (user.bio || '').replace(/'/g, "\\'");
+                    const mutualText = user.mutualConnections > 0 
+                        ? `${user.mutualConnections} mutual ${user.mutualConnections === 1 ? 'friend' : 'friends'}`
+                        : '';
+                    
+                    const avatarContent = user.avatar 
+                        ? `<img src="${user.avatar}" alt="${safeUsername}" onerror="this.parentElement.innerHTML='${safeUsername.charAt(0).toUpperCase()}'" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`
+                        : safeUsername.charAt(0).toUpperCase();
+                    
+                    return `
+                        <div class="user-card" id="suggestion-${safeId}">
+                            <div class="user-info">
+                                <div class="user-avatar">${avatarContent}</div>
+                                <div class="user-details">
+                                    <a href="profile.html?userId=${safeId}" style="text-decoration: none; color: inherit;">
+                                        <div class="user-username">${safeUsername}</div>
+                                    </a>
+                                    <div class="user-bio">${mutualText || safeBio || 'No bio'}</div>
+                                </div>
+                            </div>
+                            <button class="follow-btn" onclick="toggleFollow('${safeId}', this)" id="follow-btn-suggestion-${safeId}">Follow</button>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading suggestions:', error);
+                document.getElementById('suggestionsList').innerHTML = 
+                    '<div class="empty-state" style="padding: 20px;">Error loading suggestions. Showing all users instead.</div>';
+            }
+        }
+        
+        // Load suggestions and users on page load
+        if (currentUserId) {
+            loadSuggestions();
+            loadUsers();
+        } else {
+            document.getElementById('usersList').innerHTML = '<div class="empty-state">Please log in to discover users</div>';
+        }
+    </script>
+</body>
+</html>
+

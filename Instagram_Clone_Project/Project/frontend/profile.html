@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile • Instagram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #fafafa;
+            color: #262626;
+        }
+        
+        /* Navigation Bar */
+        .navbar {
+            background: #fff;
+            border-bottom: 1px solid #dbdbdb;
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 0 rgba(0,0,0,.0975);
+        }
+        
+        .nav-container {
+            max-width: 975px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: #262626;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #262626;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        
+        .nav-link:hover {
+            color: #8e8e8e;
+        }
+        
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #262626;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .logout-btn:hover {
+            color: #8e8e8e;
+        }
+        
+        /* Profile Header */
+        .profile-container {
+            max-width: 975px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .profile-header {
+            display: flex;
+            padding-bottom: 44px;
+            border-bottom: 1px solid #dbdbdb;
+            margin-bottom: 44px;
+        }
+        
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            margin-right: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 60px;
+            font-weight: 600;
+            border: 3px solid #fff;
+            box-shadow: 0 0 0 1px #dbdbdb;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-avatar.own-profile {
+            cursor: pointer;
+        }
+        
+        .profile-avatar.own-profile:hover {
+            opacity: 0.9;
+        }
+        
+        .profile-avatar.own-profile::after {
+            content: '📷';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: rgba(0,0,0,0.6);
+            width: 100%;
+            height: 30%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .profile-avatar.own-profile:hover::after {
+            opacity: 1;
+        }
+        
+        .profile-info {
+            flex: 1;
+        }
+        
+        .profile-username {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .edit-profile-btn {
+            background: #fff;
+            border: 1px solid #dbdbdb;
+            border-radius: 4px;
+            padding: 5px 9px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            color: #262626;
+        }
+        
+        .profile-stats {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+        }
+        
+        .stat-label {
+            color: #8e8e8e;
+        }
+        
+        .profile-bio {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .profile-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        /* Posts Grid */
+        .posts-section {
+            border-top: 1px solid #dbdbdb;
+        }
+        
+        .posts-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-bottom: 0;
+        }
+        
+        .tab {
+            padding: 12px 0;
+            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8e8e8e;
+            cursor: pointer;
+            border-top: 1px solid transparent;
+            margin-top: -1px;
+        }
+        
+        .tab.active {
+            color: #262626;
+            border-top-color: #262626;
+        }
+        
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-top: 0;
+        }
+        
+        .post-item {
+            aspect-ratio: 1;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .post-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .post-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .post-item:hover .post-overlay {
+            opacity: 1;
+        }
+        
+        .post-stat {
+            color: #fff;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8e8e8e;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8e8e8e;
+        }
+        
+        /* Edit Profile Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #dbdbdb;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #262626;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+        
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #262626;
+        }
+        
+        .form-input {
+            padding: 8px 12px;
+            border: 1px solid #dbdbdb;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #a8a8a8;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-primary {
+            flex: 1;
+            background: #0095f6;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            background: #0084d4;
+        }
+        
+        .btn-secondary {
+            flex: 1;
+            background: #fff;
+            color: #262626;
+            border: 1px solid #dbdbdb;
+            border-radius: 4px;
+            padding: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .btn-secondary:hover {
+            background: #fafafa;
+        }
+        
+        @media (max-width: 640px) {
+            .profile-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .profile-avatar {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .profile-stats {
+                justify-content: center;
+            }
+            
+            .posts-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Instagram</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Profile Content -->
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar" onclick="handleAvatarClick()">
+                <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
+            </div>
+            <div class="profile-info">
+                <div class="profile-username">
+                    <span id="profileUsername">username</span>
+                    <span id="profileActions">
+                        <a href="upload.html" style="text-decoration: none;"><button class="edit-profile-btn" style="margin-right: 8px;">New Post</button></a>
+                        <button class="edit-profile-btn" onclick="openEditProfile()">Edit Profile</button>
+                    </span>
+                    <button id="followBtn" class="edit-profile-btn" style="display: none;" onclick="toggleFollow()">Follow</button>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="postsCount">0</span>
+                        <span class="stat-label">posts</span>
+                    </div>
+                    <div class="stat" style="cursor: pointer;" onclick="showFollowersList()">
+                        <span class="stat-value" id="followersCount">0</span>
+                        <span class="stat-label">followers</span>
+                    </div>
+                    <div class="stat" style="cursor: pointer;" onclick="showFollowingList()">
+                        <span class="stat-value" id="followingCount">0</span>
+                        <span class="stat-label">following</span>
+                    </div>
+                </div>
+                <div class="profile-bio">
+                    <div class="profile-name" id="profileName">Full Name</div>
+                    <div id="profileBio">Bio goes here</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="posts-section">
+            <div class="posts-tabs">
+                <div class="tab active">Posts</div>
+            </div>
+            <div class="posts-grid" id="postsGrid">
+                <div class="loading">Loading posts...</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        
+        // Check if user is logged in
+        const currentUserId = localStorage.getItem('userId');
+        if (!currentUserId) {
+            window.location.href = 'login.html';
+        }
+        
+        // Get profile userId from URL params or use current user
+        const urlParams = new URLSearchParams(window.location.search);
+        const profileUserId = urlParams.get('userId') || currentUserId;
+        const isOwnProfile = profileUserId === currentUserId;
+        
+        async function loadProfile() {
+            try {
+                // Load user info
+                const userResponse = await fetch(`${API_BASE}/users/${profileUserId}`);
+                const userData = await userResponse.json();
+                
+                if (userResponse.ok) {
+                    document.getElementById('profileUsername').textContent = userData.username;
+                    const avatarDiv = document.getElementById('profileAvatar');
+                    
+                    // Set cursor and hover effect only for own profile
+                    if (isOwnProfile) {
+                        avatarDiv.classList.add('own-profile');
+                    } else {
+                        avatarDiv.classList.remove('own-profile');
+                    }
+                    
+                    if (userData.avatar) {
+                        avatarDiv.style.backgroundImage = `url(${userData.avatar})`;
+                        avatarDiv.style.backgroundSize = 'cover';
+                        avatarDiv.style.backgroundPosition = 'center';
+                        avatarDiv.textContent = '';
+                        // Keep the input element
+                        if (!avatarDiv.querySelector('#avatarInput')) {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.id = 'avatarInput';
+                            input.accept = 'image/*';
+                            input.style.display = 'none';
+                            input.onchange = handleAvatarUpload;
+                            avatarDiv.appendChild(input);
+                        }
+                    } else {
+                        avatarDiv.style.backgroundImage = 'none';
+                        avatarDiv.textContent = (userData.username || 'U').charAt(0).toUpperCase();
+                        // Keep the input element
+                        if (!avatarDiv.querySelector('#avatarInput')) {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.id = 'avatarInput';
+                            input.accept = 'image/*';
+                            input.style.display = 'none';
+                            input.onchange = handleAvatarUpload;
+                            avatarDiv.appendChild(input);
+                        }
+                    }
+                    document.getElementById('profileName').textContent = userData.fullname || userData.username;
+                    document.getElementById('profileBio').textContent = userData.bio || 'No bio yet';
+                    document.getElementById('followersCount').textContent = userData.followersCount || 0;
+                    document.getElementById('followingCount').textContent = userData.followingCount || 0;
+                }
+                
+                // Load user's reels
+                const reelsResponse = await fetch(`${API_BASE}/reels/user/${profileUserId}`);
+                const reelsData = await reelsResponse.json();
+                
+                console.log('Profile reels response:', reelsData);
+                console.log('Profile userId:', profileUserId);
+                
+                if (reelsResponse.ok) {
+                    const reels = reelsData.reels || [];
+                    console.log('Number of reels found:', reels.length);
+                    document.getElementById('postsCount').textContent = reels.length;
+                    if (reels.length > 0) {
+                        console.log('Rendering', reels.length, 'posts');
+                        renderPosts(reels);
+                    } else {
+                        console.log('No reels found for user');
+                        document.getElementById('postsGrid').innerHTML = '<div class="empty-state">No posts yet</div>';
+                    }
+                } else {
+                    console.error('Failed to load reels:', reelsData);
+                    document.getElementById('postsGrid').innerHTML = '<div class="empty-state">Error loading posts: ' + (reelsData.error || 'Unknown error') + '</div>';
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                document.getElementById('postsGrid').innerHTML = '<div class="empty-state">Error loading profile</div>';
+            }
+        }
+        
+        function renderPosts(reels) {
+            const grid = document.getElementById('postsGrid');
+            
+            if (!reels || reels.length === 0) {
+                grid.innerHTML = '<div class="empty-state">No posts yet</div>';
+                return;
+            }
+            
+            console.log('Rendering posts:', reels);
+            
+            if (!reels || reels.length === 0) {
+                grid.innerHTML = '<div class="empty-state">No posts yet</div>';
+                return;
+            }
+            
+            const postsHTML = reels.map(reel => {
+                if (!reel || !reel.mediaUrl) {
+                    console.warn('Invalid reel data:', reel);
+                    return '';
+                }
+                // Escape special characters in mediaUrl for HTML
+                const safeMediaUrl = reel.mediaUrl.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const safeId = reel.id.replace(/'/g, "\\'");
+                return `
+                    <div class="post-item" onclick="viewReel('${safeId}')">
+                        <img src="${safeMediaUrl}" 
+                             alt="Post" 
+                             onerror="console.error('Failed to load image'); this.src='https://via.placeholder.com/300x300/333/fff?text=Post'"
+                             onload="console.log('Image loaded successfully')">
+                        <div class="post-overlay">
+                            <div class="post-stat">❤️ ${reel.likesCount || 0}</div>
+                            <div class="post-stat">💬 ${reel.commentsCount || 0}</div>
+                        </div>
+                    </div>
+                `;
+            }).filter(html => html !== '').join('');
+            
+            console.log('Generated HTML for', reels.length, 'posts');
+            grid.innerHTML = postsHTML;
+        }
+        
+        async function viewReel(reelId) {
+            // Show post detail modal
+            try {
+                console.log('Loading reel, original ID:', reelId);
+                
+                // Clean and validate reelId
+                if (!reelId || reelId.trim() === '') {
+                    alert('Invalid post ID');
+                    return;
+                }
+                
+                // Remove any extra encoding/decoding - use the ID as-is
+                const cleanReelId = reelId.trim();
+                console.log('Cleaned reel ID:', cleanReelId);
+                
+                const response = await fetch(`${API_BASE}/reels/${cleanReelId}`);
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers.get('content-type'));
+                
+                // Check response status first
+                if (!response.ok) {
+                    let errorText;
+                    try {
+                        errorText = await response.text();
+                        console.error('Error response text:', errorText);
+                        const errorData = JSON.parse(errorText);
+                        alert('Failed to load post: ' + (errorData.error || 'Unknown error'));
+                    } catch (e) {
+                        errorText = await response.text().catch(() => 'Unknown error');
+                        console.error('Error parsing response:', e);
+                        alert('Failed to load post: ' + (errorText.substring(0, 100) || 'Unknown error'));
+                    }
+                    return;
+                }
+                
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text.substring(0, 200));
+                    alert('Failed to load post: Server returned invalid response. Check console for details.');
+                    return;
+                }
+                
+                const data = await response.json();
+                console.log('Reel data loaded:', data);
+                
+                if (!data || !data.id) {
+                    console.error('Invalid reel data:', data);
+                    alert('Failed to load post: Invalid data received');
+                    return;
+                }
+                
+                showPostDetailModal(data);
+            } catch (error) {
+                console.error('Error loading post:', error);
+                alert('Error loading post: ' + error.message + '. Check console for details.');
+            }
+        }
+        
+        function showPostDetailModal(reel) {
+            const modal = document.getElementById('postDetailModal');
+            const modalContent = document.getElementById('postDetailContent');
+            
+            if (!modal || !modalContent) {
+                console.error('Post detail modal not found');
+                return;
+            }
+            
+            const safeId = (reel.id || '').replace(/'/g, "\\'");
+            const safeMediaUrl = (reel.mediaUrl || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const safeCaption = (reel.caption || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const safeAuthorId = (reel.author?.id || '').replace(/'/g, "\\'");
+            const safeAuthor = (reel.author?.username || 'unknown').replace(/'/g, "\\'");
+            
+            modalContent.innerHTML = `
+                <div class="post-detail-container">
+                    <div class="post-detail-image">
+                        <img src="${safeMediaUrl}" alt="Post" onerror="this.src='https://via.placeholder.com/600x600/333/fff?text=Post'">
+                    </div>
+                    <div class="post-detail-sidebar">
+                        <div class="post-detail-header">
+                            <a href="profile.html?userId=${safeAuthorId}" class="post-detail-author">
+                                <div class="post-detail-avatar-small">${safeAuthor.charAt(0).toUpperCase()}</div>
+                                <span>${safeAuthor}</span>
+                            </a>
+                        </div>
+                        <div class="post-detail-comments" id="postDetailComments-${safeId}">
+                            ${reel.comments && reel.comments.length > 0 
+                                ? reel.comments.map(c => `
+                                    <div class="post-detail-comment">
+                                        <a href="profile.html?userId=${c.author?.id || ''}" class="comment-author-link">${c.author?.username || 'unknown'}</a>
+                                        <span>${c.text || ''}</span>
+                                    </div>
+                                `).join('')
+                                : '<div class="post-detail-comment-empty">No comments yet</div>'
+                            }
+                        </div>
+                        <div class="post-detail-actions">
+                            <button class="post-detail-action-btn" onclick="toggleLikeDetail('${safeId}')" id="like-btn-${safeId}">🤍</button>
+                            <button class="post-detail-action-btn" onclick="focusCommentDetail('${safeId}')">💬</button>
+                            <button class="post-detail-action-btn" onclick="shareReelDetail('${safeId}')">📤</button>
+                        </div>
+                        <div class="post-detail-likes" id="likes-${safeId}">${(reel.likesCount !== undefined && reel.likesCount !== null && !isNaN(Number(reel.likesCount))) ? Number(reel.likesCount) : 0} likes</div>
+                        <div class="post-detail-caption">
+                            <a href="profile.html?userId=${safeAuthorId}" class="caption-author">${safeAuthor}</a>
+                            <span>${safeCaption}</span>
+                        </div>
+                        <div class="post-detail-time">${getTimeAgo(new Date(reel.createdAt))}</div>
+                        <div class="post-detail-comment-form">
+                            <input type="text" 
+                                   class="post-detail-comment-input" 
+                                   id="post-detail-comment-input-${safeId}" 
+                                   placeholder="Add a comment..."
+                                   onkeypress="if(event.key==='Enter') postCommentDetail('${safeId}')">
+                            <button class="post-detail-comment-btn" onclick="postCommentDetail('${safeId}')" id="post-detail-comment-btn-${safeId}">Post</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+        
+        function closePostDetailModal() {
+            document.getElementById('postDetailModal').classList.remove('active');
+        }
+        
+        async function toggleLikeDetail(reelId) {
+            const button = document.getElementById(`like-btn-${reelId}`);
+            const isLiked = button.textContent === '❤️';
+            const method = isLiked ? 'DELETE' : 'POST';
+            
+            // Optimistic update
+            button.textContent = isLiked ? '🤍' : '❤️';
+            
+            try {
+                const response = await fetch(`${API_BASE}/likes/${reelId}`, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: currentUserId }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById(`likes-${reelId}`).textContent = `${data.likesCount} likes`;
+                } else {
+                    // Revert on error
+                    button.textContent = isLiked ? '❤️' : '🤍';
+                }
+            } catch (err) {
+                // Revert on error
+                button.textContent = isLiked ? '❤️' : '🤍';
+                console.error('Error toggling like:', err);
+            }
+        }
+        
+        function focusCommentDetail(reelId) {
+            const input = document.getElementById(`post-detail-comment-input-${reelId}`);
+            if (input) {
+                input.focus();
+            }
+        }
+        
+        function shareReelDetail(reelId) {
+            // Share functionality
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Check out this post',
+                    url: window.location.href + `#post-${reelId}`
+                });
+            } else {
+                alert('Share link: ' + window.location.href + `#post-${reelId}`);
+            }
+        }
+        
+        async function postCommentDetail(reelId) {
+            const input = document.getElementById(`post-detail-comment-input-${reelId}`);
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            const username = localStorage.getItem('username') || 'user';
+            input.disabled = true;
+            
+            try {
+                const response = await fetch(`${API_BASE}/comments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        reelId: reelId.toString(),
+                        userId: currentUserId,
+                        username: username,
+                        text: text,
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Reload post to show new comment
+                    await viewReel(reelId);
+                    input.value = '';
+                } else {
+                    alert('Failed to post comment: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error posting comment:', error);
+                alert('Error posting comment: ' + error.message);
+            } finally {
+                input.disabled = false;
+            }
+        }
+        
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'JUST NOW';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}M`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}H`;
+            const days = Math.floor(hours / 24);
+            return `${days}D`;
+        }
+        
+        function handleLogout() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('username');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        }
+        
+        // Avatar upload
+        function handleAvatarClick() {
+            if (isOwnProfile) {
+                const input = document.getElementById('avatarInput');
+                if (input) {
+                    input.click();
+                } else {
+                    console.error('Avatar input not found');
+                }
+            }
+        }
+        
+        async function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file');
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image size must be less than 5MB');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('media', file);
+            
+            const avatarDiv = document.getElementById('profileAvatar');
+            const originalText = avatarDiv.textContent;
+            const originalBg = avatarDiv.style.backgroundImage;
+            avatarDiv.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #fff; font-size: 14px;">Uploading...</div>';
+            
+            try {
+                // Upload to MinIO
+                const uploadResponse = await fetch(`${API_BASE}/media/upload`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                
+                const uploadData = await uploadResponse.json();
+                
+                if (!uploadResponse.ok) {
+                    throw new Error(uploadData.error || 'Upload failed');
+                }
+                
+                console.log('Avatar uploaded:', uploadData.url);
+                
+                // Update user profile with avatar URL
+                const updateResponse = await fetch(`${API_BASE}/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: currentUserId,
+                        username: document.getElementById('profileUsername').textContent,
+                        avatar: uploadData.url,
+                    }),
+                });
+                
+                if (updateResponse.ok) {
+                    // Update avatar display
+                    avatarDiv.style.backgroundImage = `url(${uploadData.url})`;
+                    avatarDiv.style.backgroundSize = 'cover';
+                    avatarDiv.style.backgroundPosition = 'center';
+                    avatarDiv.textContent = '';
+                    
+                    // Re-add the input element
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.id = 'avatarInput';
+                    input.accept = 'image/*';
+                    input.style.display = 'none';
+                    input.onchange = handleAvatarUpload;
+                    avatarDiv.appendChild(input);
+                    
+                    alert('Profile picture updated successfully!');
+                } else {
+                    const errorData = await updateResponse.json();
+                    throw new Error(errorData.error || 'Failed to update profile');
+                }
+            } catch (error) {
+                console.error('Error uploading avatar:', error);
+                alert('Failed to upload avatar: ' + error.message);
+                // Restore original state
+                avatarDiv.style.backgroundImage = originalBg;
+                avatarDiv.textContent = originalText;
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.id = 'avatarInput';
+                input.accept = 'image/*';
+                input.style.display = 'none';
+                input.onchange = handleAvatarUpload;
+                avatarDiv.appendChild(input);
+            }
+        }
+        
+        // Avatar upload
+        function handleAvatarClick() {
+            if (isOwnProfile) {
+                document.getElementById('avatarInput').click();
+            }
+        }
+        
+        async function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file');
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image size must be less than 5MB');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('media', file);
+            
+            const avatarDiv = document.getElementById('profileAvatar');
+            const originalContent = avatarDiv.innerHTML;
+            avatarDiv.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #fff; font-size: 14px;">Uploading...</div>';
+            
+            try {
+                // Upload to MinIO
+                const uploadResponse = await fetch(`${API_BASE}/media/upload`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                
+                const uploadData = await uploadResponse.json();
+                
+                if (!uploadResponse.ok) {
+                    throw new Error(uploadData.error || 'Upload failed');
+                }
+                
+                console.log('Avatar uploaded:', uploadData.url);
+                
+                // Update user profile with avatar URL
+                const updateResponse = await fetch(`${API_BASE}/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: currentUserId,
+                        username: document.getElementById('profileUsername').textContent,
+                        avatar: uploadData.url,
+                    }),
+                });
+                
+                if (updateResponse.ok) {
+                    // Update avatar display
+                    avatarDiv.style.backgroundImage = `url(${uploadData.url})`;
+                    avatarDiv.style.backgroundSize = 'cover';
+                    avatarDiv.style.backgroundPosition = 'center';
+                    avatarDiv.textContent = '';
+                    avatarDiv.innerHTML = '<input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">';
+                    
+                    alert('Profile picture updated successfully!');
+                } else {
+                    const errorData = await updateResponse.json();
+                    throw new Error(errorData.error || 'Failed to update profile');
+                }
+            } catch (error) {
+                console.error('Error uploading avatar:', error);
+                alert('Failed to upload avatar: ' + error.message);
+                avatarDiv.innerHTML = originalContent;
+            }
+        }
+        
+        // Edit Profile Modal
+        function openEditProfile() {
+            const modal = document.getElementById('editProfileModal');
+            const user = {
+                username: document.getElementById('profileUsername').textContent,
+                bio: document.getElementById('profileBio').textContent,
+                fullname: document.getElementById('profileName').textContent
+            };
+            
+            document.getElementById('editUsername').value = user.username;
+            document.getElementById('editFullname').value = user.fullname;
+            document.getElementById('editBio').value = user.bio;
+            
+            // Clear any previous error messages
+            hideError();
+            
+            modal.classList.add('active');
+        }
+        
+        function closeEditProfile() {
+            document.getElementById('editProfileModal').classList.remove('active');
+        }
+        
+        async function saveProfile() {
+            const username = document.getElementById('editUsername').value.trim();
+            const fullname = document.getElementById('editFullname').value.trim();
+            const bio = document.getElementById('editBio').value.trim();
+            
+            if (!username) {
+                showError('Username is required');
+                return;
+            }
+            
+            // Disable submit button to prevent double submission
+            const submitBtn = document.querySelector('.btn-primary');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: currentUserId,
+                        username,
+                        fullname,
+                        bio,
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Update UI
+                    document.getElementById('profileUsername').textContent = username;
+                    document.getElementById('profileName').textContent = fullname || username;
+                    document.getElementById('profileBio').textContent = bio || 'No bio yet';
+                    document.getElementById('profileAvatar').textContent = username.charAt(0).toUpperCase();
+                    
+                    // Update localStorage
+                    localStorage.setItem('username', username);
+                    
+                    // Clear any error messages
+                    hideError();
+                    
+                    closeEditProfile();
+                } else {
+                    showError(data.error || 'Failed to update profile');
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                showError('Error updating profile: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        }
+        
+        function showError(message) {
+            let errorDiv = document.getElementById('profileError');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.id = 'profileError';
+                errorDiv.style.cssText = 'color: #ed4956; font-size: 14px; margin-top: 10px; padding: 8px; background: #fee; border-radius: 4px;';
+                const form = document.querySelector('.modal-form');
+                form.appendChild(errorDiv);
+            }
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        function hideError() {
+            const errorDiv = document.getElementById('profileError');
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+            }
+        }
+        
+        // Follow/Unfollow functionality
+        async function toggleFollow() {
+            const btn = document.getElementById('followBtn');
+            const isFollowing = btn.textContent === 'Following';
+            const method = isFollowing ? 'DELETE' : 'POST';
+            
+            btn.disabled = true;
+            btn.textContent = isFollowing ? 'Unfollowing...' : 'Following...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/users/${profileUserId}/follow`, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ followerId: currentUserId }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    if (isFollowing) {
+                        btn.textContent = 'Follow';
+                        btn.classList.remove('following');
+                    } else {
+                        btn.textContent = 'Following';
+                        btn.classList.add('following');
+                    }
+                    // Reload profile to update counts
+                    loadProfile();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to update follow status'));
+                    btn.textContent = isFollowing ? 'Following' : 'Follow';
+                }
+            } catch (error) {
+                console.error('Error toggling follow:', error);
+                alert('Error: ' + error.message);
+                btn.textContent = isFollowing ? 'Following' : 'Follow';
+            } finally {
+                btn.disabled = false;
+            }
+        }
+        
+        // Show followers/following lists
+        async function showFollowersList() {
+            try {
+                const response = await fetch(`${API_BASE}/users/${profileUserId}/followers`);
+                const data = await response.json();
+                showUserListModal('Followers', data.followers || []);
+            } catch (error) {
+                console.error('Error loading followers:', error);
+                alert('Failed to load followers');
+            }
+        }
+        
+        async function showFollowingList() {
+            try {
+                const response = await fetch(`${API_BASE}/users/${profileUserId}/following`);
+                const data = await response.json();
+                showUserListModal('Following', data.following || []);
+            } catch (error) {
+                console.error('Error loading following:', error);
+                alert('Failed to load following');
+            }
+        }
+        
+        function showUserListModal(title, users) {
+            const modal = document.getElementById('userListModal');
+            const modalTitle = document.getElementById('userListTitle');
+            const modalContent = document.getElementById('userListContent');
+            
+            if (!modal || !modalTitle || !modalContent) {
+                console.error('Modal elements not found');
+                alert('Failed to open ' + title + ' list');
+                return;
+            }
+            
+            console.log('Showing', title, ':', users);
+            
+            modalTitle.textContent = title;
+            modalContent.innerHTML = users.length === 0 
+                ? '<div class="empty-state" style="padding: 40px; text-align: center; color: #8e8e8e;">No users found</div>'
+                : users.map(user => {
+                    const safeId = (user.id || '').replace(/'/g, "\\'");
+                    const safeUsername = (user.username || 'unknown').replace(/'/g, "\\'");
+                    return `
+                        <div class="user-list-item" onclick="window.location.href='profile.html?userId=${safeId}'">
+                            <div class="user-avatar-small">${safeUsername.charAt(0).toUpperCase()}</div>
+                            <div class="user-name">${safeUsername}</div>
+                        </div>
+                    `;
+                }).join('');
+            
+            modal.classList.add('active');
+        }
+        
+        function closeUserListModal() {
+            document.getElementById('userListModal').classList.remove('active');
+        }
+        
+        // Check if current user is following this profile
+        async function checkFollowStatus() {
+            if (isOwnProfile) {
+                document.getElementById('followBtn').style.display = 'none';
+                document.getElementById('profileActions').style.display = 'inline-block';
+                return;
+            }
+            
+            document.getElementById('profileActions').style.display = 'none';
+            const followBtn = document.getElementById('followBtn');
+            followBtn.style.display = 'inline-block';
+            
+            try {
+                // Check if following by checking the following list of current user
+                const response = await fetch(`${API_BASE}/users/${currentUserId}/following`);
+                const data = await response.json();
+                const isFollowing = (data.following || []).some(u => u.id === profileUserId);
+                
+                if (isFollowing) {
+                    followBtn.textContent = 'Following';
+                    followBtn.classList.add('following');
+                } else {
+                    followBtn.textContent = 'Follow';
+                    followBtn.classList.remove('following');
+                }
+            } catch (error) {
+                console.error('Error checking follow status:', error);
+            }
+        }
+        
+        // Load profile on page load
+        loadProfile();
+        checkFollowStatus();
+    </script>
+    
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Edit Profile</div>
+                <button class="close-btn" onclick="closeEditProfile()">×</button>
+            </div>
+            <div class="modal-form">
+                <div class="form-group">
+                    <label class="form-label" for="editUsername">Username</label>
+                    <input type="text" id="editUsername" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editFullname">Full Name</label>
+                    <input type="text" id="editFullname" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editBio">Bio</label>
+                    <textarea id="editBio" class="form-input" rows="4" maxlength="150"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="closeEditProfile()">Cancel</button>
+                    <button class="btn-primary" onclick="saveProfile()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User List Modal (Followers/Following) -->
+    <div class="modal" id="userListModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <div class="modal-title" id="userListTitle">Followers</div>
+                <button class="close-btn" onclick="closeUserListModal()">×</button>
+            </div>
+            <div id="userListContent" style="max-height: 400px; overflow-y: auto;">
+                <!-- User list will be populated here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Post Detail Modal -->
+    <div class="post-detail-modal" id="postDetailModal" onclick="if(event.target.id === 'postDetailModal') closePostDetailModal()">
+        <div id="postDetailContent" onclick="event.stopPropagation()" style="position: relative;">
+            <!-- Post content will be populated here -->
+        </div>
+        <button class="post-detail-close" onclick="closePostDetailModal()">×</button>
+    </div>
+    
+    <style>
+        .user-list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #efefef;
+            transition: background 0.2s;
+        }
+        
+        .user-list-item:hover {
+            background: #fafafa;
+        }
+        
+        .user-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #262626;
+        }
+        
+        .following {
+            background: #efefef !important;
+            color: #262626 !important;
+        }
+        
+        /* Post Detail Modal */
+        .post-detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .post-detail-modal.active {
+            display: flex;
+        }
+        
+        .post-detail-content {
+            background: #fff;
+            border-radius: 4px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .post-detail-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .post-detail-image {
+            flex: 1;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 400px;
+        }
+        
+        .post-detail-image img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+        
+        .post-detail-sidebar {
+            width: 335px;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid #efefef;
+        }
+        
+        .post-detail-header {
+            padding: 16px;
+            border-bottom: 1px solid #efefef;
+            display: flex;
+            align-items: center;
+        }
+        
+        .post-detail-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #262626;
+            font-weight: 600;
+        }
+        
+        .post-detail-avatar-small {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .post-detail-comments {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .post-detail-comment {
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .post-detail-comment-empty {
+            color: #8e8e8e;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .comment-author-link {
+            font-weight: 600;
+            color: #262626;
+            text-decoration: none;
+            margin-right: 4px;
+        }
+        
+        .comment-author-link:hover {
+            text-decoration: underline;
+        }
+        
+        .post-detail-actions {
+            padding: 8px 16px;
+            display: flex;
+            gap: 16px;
+            border-top: 1px solid #efefef;
+            border-bottom: 1px solid #efefef;
+        }
+        
+        .post-detail-action-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+        }
+        
+        .post-detail-likes {
+            padding: 8px 16px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .post-detail-caption {
+            padding: 0 16px 8px;
+            font-size: 14px;
+        }
+        
+        .caption-author {
+            font-weight: 600;
+            color: #262626;
+            text-decoration: none;
+            margin-right: 4px;
+        }
+        
+        .caption-author:hover {
+            text-decoration: underline;
+        }
+        
+        .post-detail-time {
+            padding: 0 16px 8px;
+            font-size: 12px;
+            color: #8e8e8e;
+            text-transform: uppercase;
+        }
+        
+        .post-detail-comment-form {
+            padding: 12px 16px;
+            border-top: 1px solid #efefef;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .post-detail-comment-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            color: #262626;
+        }
+        
+        .post-detail-comment-btn {
+            background: none;
+            border: none;
+            color: #0095f6;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 0;
+        }
+        
+        .post-detail-comment-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .post-detail-close {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2001;
+        }
+        
+        .post-detail-close:hover {
+            background: rgba(0,0,0,0.7);
+        }
+        
+        @media (max-width: 768px) {
+            .post-detail-content {
+                flex-direction: column;
+                max-height: 90vh;
+            }
+            
+            .post-detail-image {
+                min-width: auto;
+                max-height: 50vh;
+            }
+            
+            .post-detail-sidebar {
+                width: 100%;
+                max-height: 40vh;
+            }
+        }
+    </style>
+</body>
+</html>
+

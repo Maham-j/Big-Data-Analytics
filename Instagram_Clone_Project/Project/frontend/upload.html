@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Post • Instagram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #fafafa;
+            color: #262626;
+        }
+        
+        /* Navigation Bar */
+        .navbar {
+            background: #fff;
+            border-bottom: 1px solid #dbdbdb;
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 0 rgba(0,0,0,.0975);
+        }
+        
+        .nav-container {
+            max-width: 975px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: #262626;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #262626;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        /* Upload Container */
+        .upload-container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .upload-box {
+            background: #fff;
+            border: 1px solid #dbdbdb;
+            border-radius: 4px;
+            padding: 40px;
+        }
+        
+        .upload-title {
+            font-size: 24px;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .upload-area {
+            border: 2px dashed #dbdbdb;
+            border-radius: 4px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            margin-bottom: 20px;
+        }
+        
+        .upload-area:hover {
+            border-color: #0095f6;
+        }
+        
+        .upload-area.dragover {
+            border-color: #0095f6;
+            background: #f0f8ff;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .upload-text {
+            color: #8e8e8e;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .upload-button {
+            background: #0095f6;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 16px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .upload-button:hover {
+            background: #0084d4;
+        }
+        
+        .preview-container {
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .preview-container.active {
+            display: block;
+        }
+        
+        .preview-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            border-radius: 4px;
+            background: #000;
+        }
+        
+        .preview-video {
+            width: 100%;
+            max-height: 500px;
+            border-radius: 4px;
+            background: #000;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #262626;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #dbdbdb;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #a8a8a8;
+        }
+        
+        .caption-input {
+            min-height: 100px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: #0095f6;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            background: #0084d4;
+        }
+        
+        .submit-btn:disabled {
+            background: #b2dffc;
+            cursor: not-allowed;
+        }
+        
+        .error-message {
+            background: #fee;
+            color: #ed4956;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .error-message.active {
+            display: block;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .success-message.active {
+            display: block;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #efefef;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .progress-bar.active {
+            display: block;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #0095f6;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .file-info {
+            font-size: 12px;
+            color: #8e8e8e;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Instagram</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Upload Container -->
+    <div class="upload-container">
+        <div class="upload-box">
+            <h1 class="upload-title">Create New Post</h1>
+            
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+            
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📷</div>
+                <div class="upload-text">Drag photos and videos here</div>
+                <button class="upload-button">Select from computer</button>
+                <input type="file" id="fileInput" accept="image/*,video/*" style="display: none;" onchange="handleFileSelect(event)">
+            </div>
+            
+            <div class="preview-container" id="previewContainer">
+                <img id="previewImage" class="preview-image" style="display: none;">
+                <video id="previewVideo" class="preview-video" controls style="display: none;"></video>
+                <div class="file-info" id="fileInfo"></div>
+            </div>
+            
+            <form id="uploadForm" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label" for="caption">Caption</label>
+                    <textarea 
+                        id="caption" 
+                        class="form-input caption-input" 
+                        placeholder="Write a caption..."
+                        maxlength="2200"></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn">Share</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        let selectedFile = null;
+        let uploadedMediaUrl = null;
+        
+        // Check if user is logged in
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            window.location.href = 'login.html';
+        }
+        
+        // Drag and drop handlers
+        const uploadArea = document.getElementById('uploadArea');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+        
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+        
+        function handleFile(file) {
+            selectedFile = file;
+            
+            // Validate file type
+            if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+                showError('Please select an image or video file');
+                return;
+            }
+            
+            // Validate file size (50MB max)
+            if (file.size > 50 * 1024 * 1024) {
+                showError('File size must be less than 50MB');
+                return;
+            }
+            
+            // Show preview
+            const previewContainer = document.getElementById('previewContainer');
+            const previewImage = document.getElementById('previewImage');
+            const previewVideo = document.getElementById('previewVideo');
+            const fileInfo = document.getElementById('fileInfo');
+            
+            previewContainer.classList.add('active');
+            
+            if (file.type.startsWith('image/')) {
+                previewImage.style.display = 'block';
+                previewVideo.style.display = 'none';
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else if (file.type.startsWith('video/')) {
+                previewVideo.style.display = 'block';
+                previewImage.style.display = 'none';
+                previewVideo.src = URL.createObjectURL(file);
+            }
+            
+            fileInfo.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+            hideError();
+        }
+        
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            if (!selectedFile) {
+                showError('Please select a file to upload');
+                return;
+            }
+            
+            const caption = document.getElementById('caption').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sharing...';
+            progressBar.classList.add('active');
+            hideError();
+            hideSuccess();
+            
+            try {
+                // Step 1: Upload media
+                const formData = new FormData();
+                formData.append('media', selectedFile);
+                
+                // Simulate progress
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += 10;
+                    if (progress < 90) {
+                        progressFill.style.width = progress + '%';
+                    }
+                }, 200);
+                
+                const uploadResponse = await fetch(`${API_BASE}/media/upload`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                
+                clearInterval(progressInterval);
+                progressFill.style.width = '100%';
+                
+                if (!uploadResponse.ok) {
+                    const errorData = await uploadResponse.json();
+                    throw new Error(errorData.error || 'Failed to upload media');
+                }
+                
+                const uploadData = await uploadResponse.json();
+                uploadedMediaUrl = uploadData.url;
+                
+                // Step 2: Create reel
+                const reelResponse = await fetch(`${API_BASE}/reels`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: userId,
+                        caption: caption,
+                        mediaUrl: uploadedMediaUrl,
+                    }),
+                });
+                
+                if (!reelResponse.ok) {
+                    const errorData = await reelResponse.json();
+                    throw new Error(errorData.error || 'Failed to create post');
+                }
+                
+                // Success!
+                showSuccess('Post shared successfully!');
+                submitBtn.textContent = 'Share';
+                
+                // Reset form
+                setTimeout(() => {
+                    selectedFile = null;
+                    uploadedMediaUrl = null;
+                    document.getElementById('uploadForm').reset();
+                    document.getElementById('previewContainer').classList.remove('active');
+                    document.getElementById('fileInput').value = '';
+                    progressBar.classList.remove('active');
+                    progressFill.style.width = '0%';
+                    
+                    // Redirect to profile after 1 second
+                    setTimeout(() => {
+                        window.location.href = 'profile.html';
+                    }, 1000);
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                showError(error.message || 'Failed to upload post. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Share';
+                progressBar.classList.remove('active');
+                progressFill.style.width = '0%';
+            }
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('active');
+        }
+        
+        function hideError() {
+            document.getElementById('errorMessage').classList.remove('active');
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.classList.add('active');
+        }
+        
+        function hideSuccess() {
+            document.getElementById('successMessage').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
+
